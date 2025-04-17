@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,138 +10,138 @@
       text-align: center;
       margin: 0;
       padding: 0;
-    }
+    }h1 {
+  margin: 20px 0;
+  font-size: 26px;
+  color: #3d550c;
+  text-shadow: 2px 2px 0px #ffffff;
+}
 
-    h1 {
-      margin: 20px 0;
-      font-size: 26px;
-      color: #3d550c;
-      text-shadow: 2px 2px 0px #ffffff;
-    }
+#maze {
+  display: grid;
+  grid-template-columns: repeat(10, 48px);
+  grid-template-rows: repeat(10, 48px);
+  gap: 3px;
+  justify-content: center;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #9de06d;
+  border: 5px solid #fff;
+  border-radius: 20px;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+}
 
-    #maze {
-      display: grid;
-      grid-template-columns: repeat(10, 48px);
-      grid-template-rows: repeat(10, 48px);
-      gap: 3px;
-      justify-content: center;
-      margin: 20px auto;
-      padding: 10px;
-      background-color: #9de06d;
-      border: 5px solid #fff;
-      border-radius: 20px;
-      box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
-    }
+.cell {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  box-sizing: border-box;
+  background-color: #fff5cc;
+  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+}
 
-    .cell {
-      width: 48px;
-      height: 48px;
-      border-radius: 8px;
-      box-sizing: border-box;
-      background-color: #fff5cc;
-      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
-    }
+.wall {
+  background-color: #8c6239;
+  background-image: url('https://i.imgur.com/F8Uq8gD.png');
+  background-size: cover;
+}
 
-    .wall {
-      background-color: #8c6239;
-      background-image: url('https://i.imgur.com/F8Uq8gD.png');
-      background-size: cover;
-    }
+.garage {
+  background-color: #ffcb05;
+  background-image: url('https://i.imgur.com/vP8xF2y.png');
+  background-size: cover;
+}
 
-    .garage {
-      background-color: #ffcb05;
-      background-image: url('https://i.imgur.com/vP8xF2y.png');
-      background-size: cover;
-    }
+.final-garage {
+  background-color: #ffd700;
+  background-image: url('https://i.imgur.com/2KoVdDp.png');
+  background-size: cover;
+}
 
-    .car {
-      background-image: url('carro.png');
-      background-size: cover;
-      background-repeat: no-repeat;
-    }
+.car {
+  background-image: url('carro.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 
-    .controls {
-      margin-top: 20px;
-    }
+.controls {
+  margin-top: 20px;
+}
 
-    .controls button {
-      margin: 5px;
-      padding: 15px;
-      font-size: 18px;
-      background-color: #f57f17;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-      cursor: pointer;
-    }
+.controls button {
+  margin: 5px;
+  padding: 15px;
+  font-size: 18px;
+  background-color: #f57f17;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
 
-    .controls button:hover {
-      background-color: #ff9800;
-    }
+.controls button:hover {
+  background-color: #ff9800;
+}
+
   </style>
 </head>
 <body>
   <h1>Labirinto - Ajude o Carrinho!</h1>
-  <div id="maze"></div>
-
-  <div class="controls">
+  <div id="maze"></div>  <div class="controls">
     <button onclick="moveCar(0, -1)">Cima</button><br>
     <button onclick="moveCar(-1, 0)">Esquerda</button>
     <button onclick="moveCar(1, 0)">Direita</button><br>
     <button onclick="moveCar(0, 1)">Baixo</button>
-  </div>
-
-  <button onclick="restart()">Reiniciar</button>
-
-  <script>
+    <button onclick="restart()">Reiniciar</button>
+  </div>  <script>
     const mazes = [
       [
         "WWWWWWWWWW",
-        "W        W",
-        "W WWWWWW W",
-        "W W      W",
-        "W W WWWW W",
-        "W W W    W",
-        "W W W WW W",
-        "W   W  W W",
-        "WWWW   W W",
-        "WCGWWWWWWW"
-      ],
-      [
-        "WWWWWWWWWW",
-        "W W      W",
-        "W W WWWW W",
-        "W W    W W",
-        "W WWWW W W",
-        "W     W W",
-        "WWWWW W W",
-        "W     W W",
-        "W WWWWW W",
-        "WCGWWWWWW"
-      ],
-      [
-        "WWWWWWWWWW",
-        "W     W  W",
-        "W WWW W WW",
-        "W W     GW",
-        "W WWWWWWWW",
         "WC       W",
+        "W WWWWWW W",
+        "W      W W",
         "W WWWW W W",
-        "W W  W W W",
-        "W    W   W",
+        "W W    W W",
+        "W W WW W W",
+        "W   W    W",
+        "WWWWW WWWW",
+        "W     G  W"
+      ],
+      [
+        "WWWWWWWWWW",
+        "WC       W",
+        "W WWWWW WW",
+        "W W   W  W",
+        "W W W WWWW",
+        "W   W    W",
+        "WWW WWWW W",
+        "W     W  W",
+        "W WWWWW  W",
+        "W     G  W"
+      ],
+      [
+        "WWWWWWWWWW",
+        "W   W    W",
+        "W W W WW W",
+        "W W W W  W",
+        "W W W WWWW",
+        "W W     FW",
+        "W WWWWWWWW",
+        "W       CW",
+        "W WWWWWWWW",
         "WWWWWWWWWW"
       ]
     ];
 
     let currentLevel = 0;
-    let carPosition = { x: 1, y: 8 };
+    let carPosition = { x: 1, y: 1 };
 
     function loadMaze(level) {
-      const mazeLayout = mazes[level];
-      const maze = document.getElementById("maze");
-      maze.innerHTML = "";
-      mazeLayout.forEach((row, y) => {
+      const layout = mazes[level];
+      const mazeEl = document.getElementById("maze");
+      mazeEl.innerHTML = "";
+      layout.forEach((row, y) => {
         row.split("").forEach((cell, x) => {
           const div = document.createElement("div");
           div.classList.add("cell");
@@ -152,53 +151,52 @@
             div.classList.add("wall");
           } else if (cell === "G") {
             div.classList.add("garage");
+          } else if (cell === "F") {
+            div.classList.add("final-garage");
           }
-          maze.appendChild(div);
+          mazeEl.appendChild(div);
         });
       });
     }
 
     function moveCar(dx, dy) {
-      const newX = carPosition.x + dx;
-      const newY = carPosition.y + dy;
-      const mazeLayout = mazes[currentLevel];
-      if (newY >= 0 && newY < mazeLayout.length && newX >= 0 && newX < mazeLayout[0].length) {
-        const targetCell = mazeLayout[newY][newX];
-        if (targetCell !== "W") {
-          carPosition = { x: newX, y: newY };
+      const layout = mazes[currentLevel];
+      const nx = carPosition.x + dx;
+      const ny = carPosition.y + dy;
+      if (ny < 0 || ny >= layout.length || nx < 0 || nx >= layout[0].length) return;
+      const cell = layout[ny][nx];
+      if (cell !== "W") {
+        carPosition = { x: nx, y: ny };
+        loadMaze(currentLevel);
+        if (cell === "G") {
+          currentLevel++;
+          alert("Parabéns! Avançando para o próximo nível.");
+          carPosition = findStart(currentLevel);
           loadMaze(currentLevel);
-          if (targetCell === "G") {
-            if (currentLevel < mazes.length - 1) {
-              currentLevel++;
-              alert("Parabéns! Avançando para o próximo nível.");
-              carPosition = findCarStart(currentLevel);
-              loadMaze(currentLevel);
-            } else {
-              alert("Parabéns! Você completou todos os níveis!");
-            }
-          }
+        } else if (cell === "F") {
+          alert("Parabéns! Você concluiu o labirinto!");
+          restart();
         }
       }
     }
 
-    function findCarStart(level) {
+    function findStart(level) {
       const layout = mazes[level];
       for (let y = 0; y < layout.length; y++) {
         for (let x = 0; x < layout[y].length; x++) {
           if (layout[y][x] === "C") return { x, y };
         }
       }
-      return { x: 1, y: 1 };
+      return { x:1, y:1 };
     }
 
     function restart() {
       currentLevel = 0;
-      carPosition = findCarStart(0);
-      loadMaze(currentLevel);
+      carPosition = findStart(0);
+      loadMaze(0);
     }
 
-    carPosition = findCarStart(currentLevel);
-    loadMaze(currentLevel);
-  </script>
-</body>
+    carPosition = findStart(0);
+    loadMaze(0);
+  </script></body>
 </html>
