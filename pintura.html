@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jogo de Pintura com Carimbos</title>
+  <style>
+    body {
+      background: #fff4f8;
+      font-family: 'Comic Sans MS', cursive;
+      text-align: center;
+      padding: 20px;
+    }
+
+    canvas {
+      border: 3px dashed #ff8ac1;
+      border-radius: 15px;
+      background: white;
+      cursor: crosshair;
+    }
+
+    .tools {
+      margin: 15px auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 900px;
+    }
+
+    .color, .stamp {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid transparent;
+    }
+
+    .color:hover, .stamp:hover {
+      transform: scale(1.1);
+    }
+
+    .selected {
+      border-color: #ff69b4;
+    }
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Jogo de Pintura</h1>
+
+  <div class="tools" id="palette">
+    <div class="color" style="background:#000000;" data-color="#000000"></div>
+    <div class="color" style="background:#FFFFFF;" data-color="#FFFFFF"></div>
+    <div class="color" style="background:#FF0000;" data-color="#FF0000"></div>
+    <div class="color" style="background:#00FF00;" data-color="#00FF00"></div>
+    <div class="color" style="background:#0000FF;" data-color="#0000FF"></div>
+    <div class="color" style="background:#FFFF00;" data-color="#FFFF00"></div>
+    <div class="color" style="background:#FFA500;" data-color="#FFA500"></div>
+    <div class="color" style="background:#800080;" data-color="#800080"></div>
+    <div class="color" style="background:#FFC0CB;" data-color="#FFC0CB"></div>
+    <div class="color" style="background:#00FFFF;" data-color="#00FFFF"></div>
+    <div class="color" style="background:#A52A2A;" data-color="#A52A2A"></div>
+    <div class="color" style="background:#8B4513;" data-color="#8B4513"></div>
+    <div class="color" style="background:#808080;" data-color="#808080"></div>
+    <div class="color" style="background:#C0C0C0;" data-color="#C0C0C0"></div>
+    <div class="color" style="background:#FF69B4;" data-color="#FF69B4"></div>
+    <div class="color" style="background:#ADFF2F;" data-color="#ADFF2F"></div>
+    <div class="color" style="background:#4B0082;" data-color="#4B0082"></div>
+    <div class="color" style="background:#FFD700;" data-color="#FFD700"></div>
+    <div class="color" style="background:#20B2AA;" data-color="#20B2AA"></div>
+    <div class="color" style="background:#DC143C;" data-color="#DC143C"></div>
+    <div class="color" style="background:#6495ED;" data-color="#6495ED"></div>
+    <div class="color" style="background:#FFB6C1;" data-color="#FFB6C1"></div>
+    <div class="color" style="background:#7FFF00;" data-color="#7FFF00"></div>
+    <div class="color" style="background:#40E0D0;" data-color="#40E0D0"></div>
+    <div class="color" style="background:#F08080;" data-color="#F08080"></div>
+    <div class="color" style="background:#DDA0DD;" data-color="#DDA0DD"></div>
+    <div class="color" style="background:#90EE90;" data-color="#90EE90"></div>
+    <div class="color" style="background:#E6E6FA;" data-color="#E6E6FA"></div>
+    <div class="color" style="background:#FA8072;" data-color="#FA8072"></div>
+    <div class="color" style="background:#708090;" data-color="#708090"></div>
+    <div class="color" style="background:#F5DEB3;" data-color="#F5DEB3"></div>
+    <div class="color" style="background:#FF7F50;" data-color="#FF7F50"></div>
+    <div class="color" style="background:#BA55D3;" data-color="#BA55D3"></div>
+    <div class="color" style="background:#7B68EE;" data-color="#7B68EE"></div>
+    <div class="color" style="background:#B0E0E6;" data-color="#B0E0E6"></div>
+    <div class="color" style="background:#FFDAB9;" data-color="#FFDAB9"></div>
+    <div class="color" style="background:#F0E68C;" data-color="#F0E68C"></div>
+  </div>
+
+  <canvas id="canvas" width="700" height="500"></canvas>
+
+  <h3>Carimbos</h3>
+  <div class="tools" id="stamps">
+    <div class="stamp" data-stamp="heart">
+      <svg viewBox="0 0 24 24"><path fill="red" d="M12 21.35l-1.45-1.32C5.4 15.36 
+        2 12.28 2 8.5 2 5.42 4.42 3 7.5 
+        3c1.74 0 3.41 0.81 4.5 2.09C13.09 
+        3.81 14.76 3 16.5 3 19.58 3 22 5.42 
+        22 8.5c0 3.78-3.4 6.86-8.55 
+        11.54L12 21.35z"/></svg>
+    </div>
+    <div class="stamp" data-stamp="circle">
+      <svg viewBox="0 0 24 24"><circle fill="blue" cx="12" cy="12" r="10"/></svg>
+    </div>
+    <div class="stamp" data-stamp="melon">
+      <svg viewBox="0 0 24 24"><path fill="#4CAF50" d="M12 2a10 10 0 1 1-7.07 
+        2.93A10 10 0 0 1 12 2m0 2a8 
+        8 0 1 0 5.66 2.34A8 8 0 0 0 12 4z"/><path fill="#F44336" d="M12 
+        6a6 6 0 0 1 6 6c0 1.38-1.34 2.66-2.71 
+        3.25-1.04.43-2.21.58-3.29.58s-2.25-.15-3.29-.58C7.34 
+        14.66 6 13.38 6 12a6 6 0 0 1 6-6z"/></svg>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let drawing = false;
+    let color = '#000000';
+    let currentStamp = null;
+
+    canvas.addEventListener('mousedown', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (currentStamp) {
+        drawStamp(x, y, currentStamp);
+      } else {
+        drawing = true;
+        draw(e);
+      }
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      drawing = false;
+      ctx.beginPath();
+    });
+
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!drawing || currentStamp) return;
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = 8;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = color;
+      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+
+    function drawStamp(x, y, type) {
+      const size = 40;
+      ctx.beginPath();
+      switch (type) {
+        case 'heart':
+          ctx.fillStyle = 'red';
+          ctx.moveTo(x, y);
+          ctx.bezierCurveTo(x, y - size/2, x - size, y - size/2, x - size, y);
+          ctx.bezierCurveTo(x - size, y + size/2, x, y + size, x, y + size * 1.5);
+          ctx.bezierCurveTo(x, y + size, x + size, y + size/2, x + size, y);
+          ctx.bezierCurveTo(x + size, y - size/2, x, y - size/2, x, y);
+          ctx.fill();
+          break;
+        case 'circle':
+          ctx.fillStyle = 'blue';
+          ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+        case 'melon':
+          ctx.fillStyle = '#4CAF50';
+          ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.fillStyle = '#F44336';
+          ctx.arc(x, y, size / 2.5, 0, Math.PI);
+          ctx.fill();
+          break;
+      }
+    }
+
+    document.querySelectorAll('.color').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.color').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        color = el.getAttribute('data-color');
+        currentStamp = null;
+      });
+    });
+
+    document.querySelectorAll('.stamp').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.stamp').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        currentStamp = el.getAttribute('data-stamp');
+      });
+    });
+  </script>
+
+</body>
+</html>

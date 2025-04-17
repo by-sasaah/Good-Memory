@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jogo dos 7 Erros</title>
+  <style>
+    body {
+      background-color: #fff8dc;
+      font-family: 'Comic Sans MS', cursive;
+      text-align: center;
+    }
+
+    h1 {
+      color: #ff6347;
+    }
+
+    .game-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .image-pair {
+      position: relative;
+    }
+
+    .image-pair img {
+      width: 300px;
+      height: auto;
+      border: 3px solid #ff6347;
+      border-radius: 10px;
+    }
+
+    .circle {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border: 3px solid red;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    #nextButton {
+      margin-top: 20px;
+      padding: 10px 25px;
+      font-size: 18px;
+      background-color: #6a5acd;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #contador {
+      font-size: 20px;
+      margin-top: 10px;
+      color: #006400;
+    }
+  </style>
+</head>
+<body>
+  <h1>Encontre os 7 Erros!</h1>
+  <div id="contador">Faltam 7 erros</div>
+
+  <div class="game-container">
+    <div class="image-pair" id="img-esq-container">
+      <img id="img-esq" src="fase1-b.jpg" onclick="marcarErro(event)" />
+    </div>
+    <div class="image-pair">
+      <img id="img-dir" src="fase1-a.jpg" />
+    </div>
+  </div>
+
+  <button id="nextButton" onclick="proximaFase()">Próxima Fase</button>
+
+  <script>
+    const fases = [
+      ['fase1-a.jpg', 'fase1-b.jpg'],
+      ['fase2-a.jpg', 'fase2-b.jpg'],
+      ['fase3-a.jpg', 'fase3-b.jpg'],
+      ['fase4-a.jpg', 'fase4-b.jpg']
+    ];
+
+    let faseAtual = 0;
+    let errosEncontrados = [];
+
+    function atualizarContador() {
+      const faltam = 7 - errosEncontrados.length;
+      document.getElementById('contador').innerText = `Faltam ${faltam} erro${faltam !== 1 ? 's' : ''}`;
+    }
+
+    function marcarErro(event) {
+      if (errosEncontrados.length >= 7) return;
+
+      const container = document.getElementById('img-esq-container');
+      const rect = container.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      if (errosEncontrados.some(pos => Math.hypot(pos.x - x, pos.y - y) < 25)) return;
+
+      const circle = document.createElement('div');
+      circle.className = 'circle';
+      circle.style.left = `${x - 15}px`;
+      circle.style.top = `${y - 15}px`;
+      container.appendChild(circle);
+
+      errosEncontrados.push({ x, y });
+      atualizarContador();
+    }
+
+    function proximaFase() {
+      faseAtual++;
+      if (faseAtual >= fases.length) {
+        alert("Parabéns! Você terminou todas as fases!");
+        return;
+      }
+
+      document.getElementById('img-dir').src = fases[faseAtual][0];
+      document.getElementById('img-esq').src = fases[faseAtual][1];
+      errosEncontrados = [];
+
+      document.querySelectorAll('.circle').forEach(c => c.remove());
+
+      atualizarContador();
+    }
+
+    atualizarContador();
+  </script>
+</body>
+</html>

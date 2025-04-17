@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Monte a Palavra</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #ff7e5f, #feb47b);
+      animation: backgroundShift 5s infinite alternate;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    @keyframes backgroundShift {
+      0% { background: linear-gradient(to right, #ff7e5f, #feb47b); }
+      100% { background: linear-gradient(to right, #6a11cb, #2575fc); }
+    }
+
+    .game-container {
+      text-align: center;
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 520px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .word-image img {
+      width: 100%;
+      max-width: 220px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .word-image img:hover {
+      transform: scale(1.1);
+    }
+
+    .word-spaces {
+      display: flex;
+      justify-content: center;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .space {
+      width: 50px;
+      height: 50px;
+      border: 3px solid #f3a847;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      background-color: #ffeb3b;
+      color: #f57c00;
+      flex-shrink: 0;
+    }
+
+    .letters-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .letter {
+      width: 60px;
+      height: 60px;
+      background-color: #f57c00;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .letter:hover {
+      background-color: #ff5722;
+      transform: scale(1.1);
+    }
+
+    .letter:active {
+      transform: scale(0.95);
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 30px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+      transform: scale(1.05);
+    }
+
+    .hidden { display: none; }
+
+    footer {
+      width: 100%;
+      padding: 20px;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      font-size: 16px;
+      color: #5a2d82;
+      font-weight: bold;
+    }
+
+    footer img {
+      height: 60px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Monte a Palavra</h1>
+
+    <div class="word-image">
+      <img src="gato.png" alt="Imagem da palavra" id="word-image" />
+    </div>
+
+    <div class="word-spaces" id="spaces-container"></div>
+
+    <div class="letters-container" id="letters-container"></div>
+
+    <button id="next-word" onclick="nextWord()" class="hidden">Próxima Palavra</button>
+  </div>
+
+  <footer>
+    <p>Obrigado por jogar com a gente!</p>
+    <p>Com carinho, seu amiguinho <span style="color:#ff69b4;">Elefantinho Tico</span>!</p>
+    <img src="elefantinho-mascote.gif" alt="Mascote Elefantinho Tico" />
+  </footer>
+
+  <script>
+    const words = [
+      { word: "GATO", image: "gato.png" },
+      { word: "FLOR", image: "flor.png" },
+      { word: "BOLA", image: "bola.png" },
+      { word: "PATO", image: "pato.png" },
+      { word: "FADA", image: "fada.png" },
+    ];
+
+    let currentIndex = 0;
+    let selectedLetters = [];
+
+    const lettersContainer = document.getElementById("letters-container");
+    const spacesContainer = document.getElementById("spaces-container");
+    const nextWordButton = document.getElementById("next-word");
+    const wordImage = document.getElementById("word-image");
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+    }
+
+    function createWord(word) {
+      selectedLetters = [];
+      spacesContainer.innerHTML = '';
+      lettersContainer.innerHTML = '';
+      wordImage.src = words[currentIndex].image;
+
+      for (let i = 0; i < word.length; i++) {
+        const span = document.createElement("span");
+        span.classList.add("space");
+        spacesContainer.appendChild(span);
+      }
+
+      const shuffled = word.split("");
+      shuffleArray(shuffled);
+
+      shuffled.forEach(letter => {
+        const div = document.createElement("div");
+        div.classList.add("letter");
+        div.textContent = letter;
+        div.addEventListener("click", insertLetter);
+        lettersContainer.appendChild(div);
+      });
+
+      nextWordButton.classList.add("hidden");
+    }
+
+    function insertLetter(e) {
+      const letter = e.target.textContent;
+      const spaces = document.querySelectorAll(".space");
+
+      for (let i = 0; i < spaces.length; i++) {
+        if (spaces[i].textContent === "") {
+          spaces[i].textContent = letter;
+          selectedLetters.push(letter);
+          e.target.classList.add("hidden");
+          break;
+        }
+      }
+
+      if (selectedLetters.length === words[currentIndex].word.length) {
+        const formedWord = selectedLetters.join("");
+        if (formedWord === words[currentIndex].word) {
+          alert("Parabéns! Você acertou!");
+          nextWordButton.classList.remove("hidden");
+        } else {
+          setTimeout(() => {
+            alert("Ops! Tente novamente.");
+            createWord(words[currentIndex].word);
+          }, 400);
+        }
+      }
+    }
+
+    function nextWord() {
+      currentIndex = (currentIndex + 1) % words.length;
+      createWord(words[currentIndex].word);
+    }
+
+    createWord(words[currentIndex].word);
+  </script>
+</body>
+</html>

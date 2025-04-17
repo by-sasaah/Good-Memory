@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sequência Numérica</title>
+  <style>
+    body {
+      background-color: #121212;
+      font-family: 'Comic Sans MS', cursive;
+      color: #f9f0df;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #c85c42;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    #game-container {
+      display: grid;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .number-button {
+      background-color: #fff8;
+      border: none;
+      border-radius: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 2px 2px 5px #00000060;
+      transition: transform 0.2s, background-color 0.2s;
+      width: 80px;
+      height: 80px;
+    }
+
+    .number-button:hover {
+      transform: scale(1.1);
+      background-color: #fffdfd;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #f9f0df;
+    }
+
+    .balloon {
+      position: fixed;
+      bottom: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: floatBalloon 6s ease-in-out forwards;
+      font-size: 90px;
+      z-index: 1000;
+    }
+
+    .balloon-message {
+      position: absolute;
+      top: -80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      color: #d62828;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 24px;
+      box-shadow: 2px 2px 6px #0005;
+    }
+
+    @keyframes floatBalloon {
+      0% { bottom: -100px; opacity: 0; }
+      10% { opacity: 1; }
+      100% { bottom: 110%; opacity: 0; }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 2000;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔢 Sequência Numérica</h1>
+  <div id="game-container"></div>
+  <div id="message"></div>
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    const gameContainer = document.getElementById('game-container');
+    const message = document.getElementById('message');
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    let currentNumber = 1;
+    let level = 1;
+    const maxGridSize = 8;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function createGame() {
+      let gridSize = Math.min(level + 1, maxGridSize);
+      const totalNumbers = gridSize * gridSize;
+
+      gameContainer.style.gridTemplateColumns = `repeat(${gridSize}, 80px)`;
+      gameContainer.innerHTML = '';
+
+      const numbers = shuffle([...Array(totalNumbers).keys()].map(n => n + 1));
+      numbers.forEach(number => {
+        const button = document.createElement('button');
+        button.classList.add('number-button');
+        button.textContent = number;
+        button.addEventListener('click', () => handleClick(number, button, totalNumbers));
+        gameContainer.appendChild(button);
+      });
+
+      currentNumber = 1;
+      message.textContent = `Fase ${level} — Clique nos números em ordem crescente!`;
+    }
+
+    function handleClick(number, button, totalNumbers) {
+      if (number === currentNumber) {
+        button.disabled = true;
+        button.style.backgroundColor = '#a0ffa0';
+        currentNumber++;
+        if (currentNumber > totalNumbers) {
+          message.textContent = 'Parabéns! Fase concluída!';
+          showBalloonCelebration();
+          if (level + 1 > maxGridSize) {
+            showFireworks();
+          }
+          setTimeout(nextLevel, 4000);
+        }
+      } else {
+        message.textContent = `Ops! Você clicou no ${number}, mas o próximo é ${currentNumber}.`;
+      }
+    }
+
+    function showBalloonCelebration() {
+      const balloon = document.createElement('div');
+      balloon.className = 'balloon';
+      balloon.textContent = '🎈';
+
+      const msg = document.createElement('div');
+      msg.className = 'balloon-message';
+      msg.textContent = 'Parabéns!';
+
+      balloon.appendChild(msg);
+      document.body.appendChild(balloon);
+
+      setTimeout(() => {
+        balloon.remove();
+      }, 6000);
+    }
+
+    function nextLevel() {
+      if (level + 1 <= maxGridSize) {
+        level++;
+        createGame();
+      } else {
+        message.textContent = 'Você finalizou todas as fases! Que incrível!';
+      }
+    }
+
+    // FOGOS DE ARTIFÍCIO
+    let particles = [];
+
+    function showFireworks() {
+      resizeCanvas();
+      for (let i = 0; i < 80; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 6,
+          vy: (Math.random() - 0.5) * 6,
+          alpha: 1,
+          color: `hsl(${Math.random() * 360}, 100%, 60%)`
+        });
+      }
+      animateFireworks();
+    }
+
+    function animateFireworks() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.01;
+      });
+
+      particles = particles.filter(p => p.alpha > 0);
+      if (particles.length > 0) {
+        requestAnimationFrame(animateFireworks);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    createGame();
+  </script>
+</body>
+</html>

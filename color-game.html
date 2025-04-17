@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Sequência de Cores</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      color: #ffcc00;
+    }
+
+    .container {
+      margin-top: 30px;
+    }
+
+    .color-box {
+      width: 80px;
+      height: 80px;
+      margin: 10px;
+      border-radius: 15px;
+      display: inline-block;
+      cursor: pointer;
+      border: 4px solid #fff;
+      box-shadow: 0 0 10px #000;
+      transition: transform 0.2s;
+    }
+
+    .color-box:hover {
+      transform: scale(1.1);
+    }
+
+    #sequence-container, #user-sequence {
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: #ffcc00;
+      color: #000;
+      padding: 10px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      margin: 15px;
+      cursor: pointer;
+      box-shadow: 2px 2px 8px #000;
+      font-weight: bold;
+    }
+
+    .btn:hover {
+      background-color: #ffaa00;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🌈 Jogo da Sequência de Cores</h1>
+
+  <div class="container">
+    <button class="btn" onclick="startGame('easy')">Fácil</button>
+    <button class="btn" onclick="startGame('medium')">Médio</button>
+    <button class="btn" onclick="startGame('hard')">Difícil</button>
+    <button class="btn" onclick="startGame('extreme')">Hard</button>
+  </div>
+
+  <div id="sequence-container"></div>
+  <div id="user-sequence"></div>
+  <div class="message" id="message"></div>
+
+  <script>
+    const colors = ['pink', 'blue', 'orange', 'green', 'yellow', 'purple', 'red', 'aqua'];
+    let gameSequence = [];
+    let userSequence = [];
+    let currentLevel = 0;
+
+    const difficulties = {
+      easy: 3,
+      medium: 5,
+      hard: 7,
+      extreme: 9
+    };
+
+    function startGame(difficulty) {
+      gameSequence = [];
+      userSequence = [];
+      currentLevel = 0;
+      document.getElementById('message').textContent = "";
+      generateSequence(difficulties[difficulty]);
+      showSequence();
+    }
+
+    function generateSequence(length) {
+      for (let i = 0; i < length; i++) {
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        gameSequence.push(randomColor);
+      }
+    }
+
+    function showSequence() {
+      const container = document.getElementById('sequence-container');
+      container.innerHTML = '<h2>Memorize:</h2>';
+      gameSequence.forEach((color, index) => {
+        setTimeout(() => {
+          const box = document.createElement('div');
+          box.className = 'color-box';
+          box.style.backgroundColor = color;
+          container.innerHTML = '';
+          container.appendChild(box);
+        }, index * 800);
+      });
+
+      setTimeout(() => {
+        document.getElementById('sequence-container').innerHTML = '';
+        showColorOptions();
+      }, gameSequence.length * 800 + 500);
+    }
+
+    function showColorOptions() {
+      const container = document.getElementById('user-sequence');
+      container.innerHTML = '<h2>Reproduza a sequência:</h2>';
+      colors.forEach(color => {
+        const box = document.createElement('div');
+        box.className = 'color-box';
+        box.style.backgroundColor = color;
+        box.onclick = () => handleUserClick(color);
+        container.appendChild(box);
+      });
+    }
+
+    function handleUserClick(color) {
+      userSequence.push(color);
+      const index = userSequence.length - 1;
+      if (userSequence[index] !== gameSequence[index]) {
+        document.getElementById('message').textContent = "Ops! Sequência errada.";
+        userSequence = [];
+        return;
+      }
+
+      if (userSequence.length === gameSequence.length) {
+        document.getElementById('message').textContent = "Parabéns! Você acertou!";
+      }
+    }
+  </script>
+</body>
+</html>
