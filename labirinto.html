@@ -39,25 +39,25 @@
       height: 48px;
       border-radius: 8px;
       box-sizing: border-box;
-      background-color: #fff5cc;
-      box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+      background-size: cover;
+      background-position: center;
     }
 
     .wall {
-      background-color: #8c6239;
-      background-image: url('https://i.imgur.com/F8Uq8gD.png');
-      background-size: cover;
+      background-image: url('muro.png');
+    }
+
+    .road {
+      background-image: url('garagem-estrada.png');
     }
 
     .garage {
-      background-color: #ffcb05;
-      background-image: url('https://i.imgur.com/vP8xF2y.png');
-      background-size: cover;
+      background-image: url('garagem.png');
     }
 
     .car {
       background-image: url('carro.png');
-      background-size: cover;
+      background-size: contain;
       background-repeat: no-repeat;
     }
 
@@ -85,103 +85,143 @@
 <body>
   <h1>Labirinto - Ajude o Carrinho!</h1>
   <div id="maze"></div>
-
   <div class="controls">
     <button onclick="moveCar(0, -1)">Cima</button><br>
     <button onclick="moveCar(-1, 0)">Esquerda</button>
     <button onclick="moveCar(1, 0)">Direita</button><br>
     <button onclick="moveCar(0, 1)">Baixo</button>
+    <button onclick="restart()">Reiniciar</button>
   </div>
-
-  <button onclick="restart()">Reiniciar</button>
 
   <script>
     const mazes = [
       [
         "WWWWWWWWWW",
+        "WC       W",
+        "W WWWWWW W",
+        "W      W W",
+        "W WWWW W W",
+        "W W    W W",
+        "W W WW W W",
+        "W   W    W",
+        "WWWWW WWWW",
+        "W     G  W"
+      ],
+      [
+        "WWWWWWWWWW",
+        "WC  W    W",
+        "W W W WW W",
+        "W W W    W",
+        "W WWWWWWWW",
+        "W       GW",
+        "WWWWWWWW W",
         "W        W",
         "W WWWWWW W",
-        "W W      W",
-        "W W WWWW W",
-        "W W W    W",
-        "W W W WW W",
-        "W   W  W W",
-        "WWWW   W W",
-        "WCGWWWWWWW"
+        "WWWWWWWWWW"
       ],
       [
         "WWWWWWWWWW",
-        "W W      W",
-        "W W WWWW W",
-        "W W    W W",
+        "WC     W W",
         "W WWWW W W",
-        "W     W W",
-        "WWWWW W W",
-        "W     W W",
-        "W WWWWW W",
-        "WCGWWWWWW"
+        "W W      W",
+        "W WWWWWWWW",
+        "W     W GW",
+        "W WWWWW WW",
+        "W        W",
+        "WWWWWWWW W",
+        "WWWWWWWWWW"
       ],
       [
         "WWWWWWWWWW",
-        "W     W  W",
-        "W WWW W WW",
+        "WC     W W",
+        "W WWWW W W",
+        "W W      W",
+        "W W WWWWWW",
         "W W     GW",
         "W WWWWWWWW",
-        "WC       W",
-        "W WWWW W W",
-        "W W  W W W",
-        "W    W   W",
+        "W        W",
+        "W WWWWWWWW",
+        "WWWWWWWWWW"
+      ],
+      [
+        "WWWWWWWWWW",
+        "WC      WW",
+        "W WWWWW  W",
+        "W     W  W",
+        "WWW W WWWW",
+        "W   W    W",
+        "W WWWWWW W",
+        "W        W",
+        "W WWWWWWWW",
+        "W      G W"
+      ],
+      [
+        "WWWWWWWWWW",
+        "WC W     W",
+        "W  WWWWW W",
+        "W W      W",
+        "W WWWWW WW",
+        "W     W  W",
+        "W WWWWW  W",
+        "W     W  W",
+        "WWWW  W GW",
         "WWWWWWWWWW"
       ]
     ];
 
     let currentLevel = 0;
-    let carPosition = { x: 1, y: 8 };
+    let carPosition = { x: 1, y: 1 };
 
     function loadMaze(level) {
-      const mazeLayout = mazes[level];
-      const maze = document.getElementById("maze");
-      maze.innerHTML = "";
-      mazeLayout.forEach((row, y) => {
+      const layout = mazes[level];
+      const mazeEl = document.getElementById("maze");
+      mazeEl.innerHTML = "";
+      layout.forEach((row, y) => {
         row.split("").forEach((cell, x) => {
           const div = document.createElement("div");
           div.classList.add("cell");
-          if (carPosition.x === x && carPosition.y === y) {
-            div.classList.add("car");
-          } else if (cell === "W") {
+
+          if (cell === "W") {
             div.classList.add("wall");
           } else if (cell === "G") {
             div.classList.add("garage");
+          } else {
+            div.classList.add("road");
           }
-          maze.appendChild(div);
+
+          if (carPosition.x === x && carPosition.y === y) {
+            div.classList.add("car");
+          }
+
+          mazeEl.appendChild(div);
         });
       });
     }
 
     function moveCar(dx, dy) {
-      const newX = carPosition.x + dx;
-      const newY = carPosition.y + dy;
-      const mazeLayout = mazes[currentLevel];
-      if (newY >= 0 && newY < mazeLayout.length && newX >= 0 && newX < mazeLayout[0].length) {
-        const targetCell = mazeLayout[newY][newX];
-        if (targetCell !== "W") {
-          carPosition = { x: newX, y: newY };
-          loadMaze(currentLevel);
-          if (targetCell === "G") {
-            if (currentLevel < mazes.length - 1) {
-              currentLevel++;
-              alert("Parabéns! Avançando para o próximo nível.");
-              carPosition = findCarStart(currentLevel);
-              loadMaze(currentLevel);
-            } else {
-              alert("Parabéns! Você completou todos os níveis!");
-            }
+      const layout = mazes[currentLevel];
+      const nx = carPosition.x + dx;
+      const ny = carPosition.y + dy;
+      if (ny < 0 || ny >= layout.length || nx < 0 || nx >= layout[0].length) return;
+      const cell = layout[ny][nx];
+      if (cell !== "W") {
+        carPosition = { x: nx, y: ny };
+        loadMaze(currentLevel);
+        if (cell === "G") {
+          currentLevel++;
+          if (currentLevel < mazes.length) {
+            alert("Parabéns! Avançando para o próximo nível.");
+            carPosition = findStart(currentLevel);
+            loadMaze(currentLevel);
+          } else {
+            alert("Você concluiu todos os labirintos!");
+            restart();
           }
         }
       }
     }
 
-    function findCarStart(level) {
+    function findStart(level) {
       const layout = mazes[level];
       for (let y = 0; y < layout.length; y++) {
         for (let x = 0; x < layout[y].length; x++) {
@@ -193,12 +233,12 @@
 
     function restart() {
       currentLevel = 0;
-      carPosition = findCarStart(0);
-      loadMaze(currentLevel);
+      carPosition = findStart(0);
+      loadMaze(0);
     }
 
-    carPosition = findCarStart(currentLevel);
-    loadMaze(currentLevel);
+    carPosition = findStart(0);
+    loadMaze(0);
   </script>
 </body>
 </html>
